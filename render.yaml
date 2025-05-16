@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: render-kind-wine
+    name: proyecto-render-streamlit
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: streamlit run src/app.py --bind 0.0.0.0:$PORT
+    startCommand: streamlit run src/app.py --server.port $PORT --server.address 0.0.0.0
     envVars:
       - key: PYTHON_VERSION
         value: 3.10
