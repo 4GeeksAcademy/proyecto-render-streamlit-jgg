@@ -1,10 +1,11 @@
-from flask import Flask, request, render_template
+import streamlit as st
 from joblib import load
 import os
 
-app = Flask(__name__)
+# Títulos y texto
+st.title("Predicción de Calidad del Vino 🍷")
 
-# Lista de nombres de las características en español
+# Lista de características en español
 nombres = [
     "Acidez fija",
     "Acidez volátil",
@@ -19,7 +20,7 @@ nombres = [
     "Alcohol"
 ]
 
-# Definir rutas absolutas para los modelos
+# Rutas a los modelos
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 scaler_path = os.path.join(base_dir, 'models', 'scaler_knn.sav')
 modelo_path = os.path.join(base_dir, 'models', 'modelo_final_knn.sav')
@@ -28,30 +29,24 @@ modelo_path = os.path.join(base_dir, 'models', 'modelo_final_knn.sav')
 scaler = load(scaler_path)
 modelo = load(modelo_path)
 
-@app.route('/')
-def index():
-    return render_template('index.html', nombres=nombres)
+# Crear inputs para las características
+caracteristicas = []
+for nombre in nombres:
+    valor = st.number_input(nombre, format="%.4f")
+    caracteristicas.append(valor)
 
-@app.route('/predict', methods=['POST'])
-def predict():
+if st.button('Predecir'):
     try:
-        # Obtener y convertir características a float
-        features = [float(request.form[f'feature{i}']) for i in range(1, 12)]
-        # Escalar características
-        features_scaled = scaler.transform([features])
-        # Predecir con el modelo
-        pred = modelo.predict(features_scaled)[0]
+        # Escalar y predecir
+        caracteristicas_scaled = scaler.transform([caracteristicas])
+        pred = modelo.predict(caracteristicas_scaled)[0]
 
         if pred == 0:
-            resultado = "Este vino probablemente sea de baja calidad 🍷"
+            st.success("Este vino probablemente sea de baja calidad 🍷")
         elif pred == 1:
-            resultado = "Este vino probablemente sea de calidad media 🍷"
+            st.info("Este vino probablemente sea de calidad media 🍷")
         else:
-            resultado = "Este vino probablemente sea de alta calidad 🍷"
+            st.success("Este vino probablemente sea de alta calidad 🍷")
+
     except Exception as e:
-        resultado = f"Error en la predicción: {e}"
-
-    return render_template('index.html', resultado=resultado, nombres=nombres)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
+        st.error(f"Error en la predicción: {e}")
