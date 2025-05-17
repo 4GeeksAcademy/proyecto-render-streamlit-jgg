@@ -23,7 +23,7 @@ nombres = [
 # Ajustamos base_dir solo un nivel arriba, porque models está dentro de src
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '.'))
 
-scaler_path = os.path.join(base_dir, 'models', 'scaler_knn.sav')
+scaler_path = os.path.join(base_dir, 'models', 'modelo_scaler.sav')
 modelo_path = os.path.join(base_dir, 'models', 'modelo_final_knn.sav')
 
 # DEBUG
