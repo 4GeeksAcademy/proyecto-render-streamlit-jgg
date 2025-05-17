@@ -20,22 +20,23 @@ nombres = [
     "Alcohol"
 ]
 
-# Ajustamos base_dir solo un nivel arriba, porque models está dentro de src
+# Obtener ruta base correctamente (sube un nivel desde src/)
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
 scaler_path = os.path.join(base_dir, 'models', 'scaler_knn.sav')
 modelo_path = os.path.join(base_dir, 'models', 'modelo_final_knn.sav')
 
-
-# DEBUG
-print("Base directory:", base_dir)
-print("Ruta scaler:", scaler_path)
-print("Ruta modelo:", modelo_path)
-print("¿Existe scaler_knn.sav?:", os.path.isfile(scaler_path))
-print("¿Existe modelo_final_knn.sav?:", os.path.isfile(modelo_path))
+# Verifica que las rutas sean correctas (solo para depuración)
+st.write("Ruta scaler:", scaler_path)
+st.write("Ruta modelo:", modelo_path)
 
 # Cargar scaler y modelo
-scaler = load(scaler_path)
-modelo = load(modelo_path)
+try:
+    scaler = load(scaler_path)
+    modelo = load(modelo_path)
+except FileNotFoundError as e:
+    st.error(f"Archivo no encontrado: {e}")
+    st.stop()
 
 # Crear inputs para las características
 caracteristicas = []
@@ -45,6 +46,7 @@ for nombre in nombres:
 
 if st.button('Predecir'):
     try:
+        # Escalar y predecir
         caracteristicas_scaled = scaler.transform([caracteristicas])
         pred = modelo.predict(caracteristicas_scaled)[0]
 
