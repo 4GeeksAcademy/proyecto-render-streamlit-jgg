@@ -26,10 +26,6 @@ base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 scaler_path = os.path.join(base_dir, 'models', 'modelo_scaler.sav')
 modelo_path = os.path.join(base_dir, 'models', 'modelo_final_knn.sav')
 
-# Verifica que las rutas sean correctas (solo para depuración)
-st.write("Ruta scaler:", scaler_path)
-st.write("Ruta modelo:", modelo_path)
-
 # Cargar scaler y modelo
 try:
     scaler = load(scaler_path)
